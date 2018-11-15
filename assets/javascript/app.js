@@ -25,25 +25,6 @@ let questionSet = [{
     name: 'fiction',
 }]
 
-// const insertQuestion = (radio, label, i) => {
-//         radio.attr('name', questionSet[count].name);
-//         radio.attr('id', `radio${i}`);
-//         radio.val(i);
-//         label.html(questionSet[count].answerSet[i]);
-// }
-
-// const checkAnswer = () => {
-//     if ($('#radio0').prop('checked', true)) {
-//         correct++;
-//     }
-//     if ($('#radio1').prop('checked', true) || $('#radio2').prop('checked', true) || $('#radio3').prop('checked', true)) {
-//         incorrect++;
-//     }
-//     else {
-//         timeouts++;
-//     }    
-// }
-
 const createMainContent = () => {
     let prompt = $('<h2>').html(questionSet[count].question);
     let answerOption1 = $('<div>').html(questionSet[count].answerSet[0]);
@@ -63,31 +44,24 @@ const createMainContent = () => {
 
 }
 
-// const createForm = () => {
-//     let newDiv = $('<div>');
-//     let newButton = $('<button type="submit" form="question">Next Question!</button>');
-//     //let newButton = $('<button id="submit">Next Question!</button>');
-//     let newForm = $('<form id="question">').html(questionSet[count].question + '<br>');
-//     for (let i = 0; i < 4; i++) {
-//         let createRadioInput = $('<input>').attr('type', 'radio');
-//         let newLabel = $('<label>');
-//         insertQuestion(createRadioInput, newLabel, i);
-//         newForm.append(createRadioInput);
-//         newForm.append(newLabel);
-//         newForm.append($('<br>'));
-//         newForm.attr('onsubmit', 'checkAnswer()');
-//         newDiv.append(newForm);
-//     }
-//     $('main').html(newDiv);
-//     $('main').append(newButton);
-// }
-
-const nextQuestion = () => {
-    if (count < questionSet.length) {
+const nextQuestion = (accuracy = -1) => {
+    if (count <= questionSet.length) {
         timeouts++; //add timeouts every time; will subtract if submit is pressed
-        $('main').html('<h2>Please wait for the next question to load</h2>');
+        if (count === 0) {
+            $('main').html('<h2>You have 10 seconds to answer each question!</h2>');
+        }
+        else if (count > 0) {
+            if (accuracy === -1) {
+                $('main').html('<h2>Try to answer more quickly!</h2>')
+            }
+            else if (accuracy) {
+                $('main').html('<h2>Correct!</h2>')
+            }
+            else if (!accuracy) {
+                $('main').html(`<h2>Incorrect! The correct answer was ${questionSet[count - 1].answerSet[0]}.</h2>`)
+            }
+        }
         setTimeout(function() {
-        //createForm();
         createMainContent();
         status = setTimeout(nextQuestion, 10000);
         count++;
@@ -100,22 +74,50 @@ const nextQuestion = () => {
     }
 }
 
+const timeConverter = t => {
+
+    let seconds = Math.floor(t)
+    let centiseconds = (t - seconds) * 100;
+
+    if (seconds < 10) {
+      seconds = "0" + seconds;
+    }
+
+    if (centiseconds === 0) {
+      centiseconds = "00";
+    }
+
+    else if (centiseconds < 10) {
+      centiseconds = "0" + centiseconds;
+    }
+
+    return seconds + ":" + centiseconds;
+  }
+
+const createHeader = (time = 0) => {
+    time++;
+    let currentTime = timeConverter(time);
+    $('body').prepend($('<header>').html($(`<h3>${currentTime}</h3>`)));
+}
+
 $(document).on('click', '#submit', function() {
-    //checkAnswer();
     clearTimeout(status);
-    // timeouts--;
+    setInterval(createHeader(), 10);
     nextQuestion();
 })
 
 $(document).on('click', '.clickable', function() {
     clearTimeout(status);
     console.log($(this).attr('data-correct'));
+    let accurate;
     if ($(this).attr('data-correct') === 'true') {
         correct++;
+        accurate = true
     }
     else {
         incorrect++;
+        accurate = false;
     }
     timeouts--; //decrease timeouts if it does not occur to balance out addition earlier
-    nextQuestion();
+    nextQuestion(accurate);
 })
