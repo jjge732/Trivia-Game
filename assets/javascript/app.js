@@ -10,8 +10,8 @@ let questionSet = [{
     name: 'cities',
 },
 {
-    question: 'Which president appears on Illinois Liscence Plates?',
-    answerSet: ['Abraham Lincoln', 'Thomas Jefferson', 'Barack Obama', 'Thomas Jefferson'],
+    question: 'Which president appears on Illinois Licence Plates?',
+    answerSet: ['Abraham Lincoln', 'John Adams', 'Barack Obama', 'Thomas Jefferson'],
     name: 'presidents',
 },
 {
@@ -45,10 +45,20 @@ let questionSet = [{
 // }
 
 const createMainContent = () => {
+    let prompt = $('<h2>').html(questionSet[count].question);
     let answerOption1 = $('<div>').html(questionSet[count].answerSet[0]);
+    answerOption1.attr('class', 'clickable');
+    answerOption1.attr('data-correct', 'true');
     let answerOption2 = $('<div>').html(questionSet[count].answerSet[1]);
+    answerOption2.attr('class', 'clickable');
+    answerOption2.attr('data-correct', 'false');
     let answerOption3 = $('<div>').html(questionSet[count].answerSet[2]);
+    answerOption3.attr('class', 'clickable'); 
+    answerOption3.attr('data-correct', 'false');
     let answerOption4 = $('<div>').html(questionSet[count].answerSet[3]);
+    answerOption4.attr('class', 'clickable');
+    answerOption4.attr('data-correct', 'false');
+    $('main').html(prompt);
     $('main').append(answerOption1, answerOption2, answerOption3, answerOption4);
 
 }
@@ -73,9 +83,9 @@ const createMainContent = () => {
 // }
 
 const nextQuestion = () => {
-    // timeouts++; //add timeouts every time; will subtract if submit is pressed
     if (count < questionSet.length) {
-        $('main').html('Please wait for the next question to load');
+        timeouts++; //add timeouts every time; will subtract if submit is pressed
+        $('main').html('<h2>Please wait for the next question to load</h2>');
         setTimeout(function() {
         //createForm();
         createMainContent();
@@ -84,7 +94,7 @@ const nextQuestion = () => {
     }, 3000)
     }
     else {
-        $('main').append($('<div>').html(`Number of questions answered correctly = ${correct}`));
+        $('main').html($('<div>').html(`Number of questions answered correctly = ${correct}`));
         $('main').append($('<div>').html(`Number of questions answered incorrectly = ${incorrect}`));
         $('main').append($('<div>').html(`Number of questions unanswered = ${timeouts}`));
     }
@@ -94,5 +104,18 @@ $(document).on('click', '#submit', function() {
     //checkAnswer();
     clearTimeout(status);
     // timeouts--;
+    nextQuestion();
+})
+
+$(document).on('click', '.clickable', function() {
+    clearTimeout(status);
+    console.log($(this).attr('data-correct'));
+    if ($(this).attr('data-correct') === 'true') {
+        correct++;
+    }
+    else {
+        incorrect++;
+    }
+    timeouts--; //decrease timeouts if it does not occur to balance out addition earlier
     nextQuestion();
 })
