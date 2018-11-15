@@ -2,42 +2,53 @@ let count = 0;
 let correct = 0;
 let incorrect = 0;
 let timeouts = 0;
+let status;
 
 let questionSet = [{
     question: 'What is the capital of Illinois?',
     answerSet: [ 'Springfield', 'Chicago', 'Naperville', 'Champaign'],
     name: 'cities',
-    alreadySeen: false
 },
 {
-    question: 'What president appears on Illinois Liscence Plates?',
+    question: 'Which president appears on Illinois Liscence Plates?',
     answerSet: ['Abraham Lincoln', 'Thomas Jefferson', 'Barack Obama', 'Thomas Jefferson'],
     name: 'presidents',
-    alreadySeen: false
 },
 {
     question: 'What is the name of the fourth book in the Harry Potter series?',
     answerSet: ['The Goblet of Fire', 'The Half-Blood Prince', 'The Order of the Phoenix', 'The Prisoner of Azkaban'],
     name: 'books',
-    alreadySeen: false
 },
 {
     question: 'What is the name of the protagonist of the Hunger Games Series?',
     answerSet: ['Katniss Everdeen', 'Primm Everdeen', 'Peeta Melark', 'Hermoine Grainger'],
     name: 'fiction',
-    alreadySeen: false
 }]
 
 const insertQuestion = (radio, label, i) => {
         radio.attr('name', questionSet[count].name);
-        radio.val(questionSet[i].question);
+        radio.attr('id', `radio${i}`);
+        radio.val(i);
         label.html(questionSet[count].answerSet[i]);
+}
+
+const checkAnswer = () => {
+    if ($('#radio0').prop('checked', true)) {
+        correct++;
+    }
+    if ($('#radio1').prop('checked', true) || $('#radio2').prop('checked', true) || $('#radio3').prop('checked', true)) {
+        incorrect++;
+    }
+    else {
+        timeouts++;
+    }    
 }
 
 const createForm = () => {
     let newDiv = $('<div>');
-    let newButton = $('<button id="submit">Next Question!</button>');
-    let newForm = $('<form>').html(questionSet[0].question + '<br>');
+    let newButton = $('<button type="submit" form="question">Next Question!</button>');
+    //let newButton = $('<button id="submit">Next Question!</button>');
+    let newForm = $('<form id="question">').html(questionSet[count].question + '<br>');
     for (let i = 0; i < 4; i++) {
         let createRadioInput = $('<input>').attr('type', 'radio');
         let newLabel = $('<label>');
@@ -45,30 +56,33 @@ const createForm = () => {
         newForm.append(createRadioInput);
         newForm.append(newLabel);
         newForm.append($('<br>'));
+        newForm.attr('onsubmit', 'checkAnswer()');
         newDiv.append(newForm);
     }
     $('main').html(newDiv);
     $('main').append(newButton);
-    return newDiv;
 }
 
 const nextQuestion = () => {
+    // timeouts++; //add timeouts every time; will subtract if submit is pressed
     if (count < questionSet.length) {
         $('main').html('Please wait for the next question to load');
-    setTimeout(function() {
-    createForm();
-    setTimeout(nextQuestion, 10000);
-    count++;
+        setTimeout(function() {
+        createForm();
+        status = setTimeout(nextQuestion, 10000);
+        count++;
     }, 3000)
     }
     else {
-        $('main').append($('<div>').html(correct));
-        $('main').append($('<div>').html(incorrect));
-        $('main').append($('<div>').html(timeouts));
+        $('main').append($('<div>').html(`Number of questions answered correctly = ${correct}`));
+        $('main').append($('<div>').html(`Number of questions answered incorrectly = ${incorrect}`));
+        $('main').append($('<div>').html(`Number of questions unanswered = ${timeouts}`));
     }
 }
 
 $(document).on('click', '#submit', function() {
-    if ()
+    //checkAnswer();
+    clearTimeout(status);
+    // timeouts--;
     nextQuestion();
 })
