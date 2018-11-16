@@ -3,7 +3,6 @@ let correct = 0;
 let incorrect = 0;
 let timeouts = 0;
 let status, masterTime; 
-//let prompt = [], answerOption1 = [], answerOption2 = [], answerOption3 = [], answerOption4 = [];
 let timeKeeper = 0;
 
 //if API
