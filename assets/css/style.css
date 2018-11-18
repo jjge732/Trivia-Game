@@ -101,6 +101,10 @@ span {
     grid-column: 2 / 3;
 }
 
+#restart {
+    grid-column: 3 / 5;
+}
+
 @media screen and (max-width: 1615px) {
     span {
         height: 40px;

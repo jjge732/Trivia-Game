@@ -8,59 +8,63 @@ let categoryNumber = '';
 let queryURL;
 let apiQuestion = [], apiAnswerOption1 = [], apiAnswerOption2 = [], apiAnswerOption3 = [], apiAnswerOption4 = [];
 let categories = ['General Knowledge', 'Books', 'Film', 'Music', 'Musicals','Television', 'Video Games', 'Board Games', 'Science & Nature', 'Computers', 'Math', 'Mythology', 'Sports', 'Geography', 'Politics', 'Art', 'Celebrities', 'Animals'];
+let sessionToken = -1;
 
-if (window.matchMedia('(max-width: 490px)').matches) {
-    for (let i = 0; i < categories.length; i++) {
-        //puts categories in spans and adds a custom attribute that will be used to get the correct set of questions from the trivia api
-        let newSpan = $('<span>').html(categories[i]);
-        newSpan.attr('data-nbr', (i + 9));
-        $('main').append(newSpan);
-        $('main').append($('<br>'));
-        newSpan.attr('class', 'centerColumn categories')
-    }
-}
-else if (window.matchMedia('(max-width: 985px)').matches) {
-    for (let i = 0; i < categories.length; i++) {
-        //puts categories in spans and adds a custom attribute that will be used to get the correct set of questions from the trivia api
-        let newSpan = $('<span>').html(categories[i]);
-        newSpan.attr('data-nbr', (i + 9));
-        $('main').append(newSpan);
-        //sets up grid with category options; also adds classes for click functionality
-        if (i < categories.length / 6) {
-            newSpan.attr('class', 'secondRow categories')
-        }
-        else if (i < categories.length / 3) {
-            newSpan.attr('class', 'thirdRow categories');
-        }
-        else if (i < categories.length / 2) {
-            newSpan.attr('class', 'fourthRow categories');
-        }
-        else if (i < categories.length * 2 / 3) {
-            newSpan.attr('class', 'fifthRow categories')
-        }
-        else if (i < categories.length * 5 / 6) {
-            newSpan.attr('class', 'sixthRow categories');
-        }
-        else {
-            newSpan.attr('class', 'seventhRow categories');
+const startNewGame = () => {
+    $('main').html('<h1>Trivia</h1>');
+    if (window.matchMedia('(max-width: 490px)').matches) {
+        for (let i = 0; i < categories.length; i++) {
+            //puts categories in spans and adds a custom attribute that will be used to get the correct set of questions from the trivia api
+            let newSpan = $('<span>').html(categories[i]);
+            newSpan.attr('data-nbr', (i + 9));
+            $('main').append(newSpan);
+            $('main').append($('<br>'));
+            newSpan.attr('class', 'centerColumn categories'); //everything is in one central column in the smallest screen size
         }
     }
-}
-else {
-    for (let i = 0; i < categories.length; i++) {
-        //puts categories in spans and adds a custom attribute that will be used to get the correct set of questions from the trivia api
-        let newSpan = $('<span>').html(categories[i]);
-        newSpan.attr('data-nbr', (i + 9));
-        $('main').append(newSpan);
-        //sets up grid with category options; also adds classes for click functionality
-        if (i < categories.length / 3) {
-            newSpan.attr('class', 'secondRow categories')
+    else if (window.matchMedia('(max-width: 985px)').matches) {
+        for (let i = 0; i < categories.length; i++) {
+            //puts categories in spans and adds a custom attribute that will be used to get the correct set of questions from the trivia api
+            let newSpan = $('<span>').html(categories[i]);
+            newSpan.attr('data-nbr', (i + 9));
+            $('main').append(newSpan);
+            //sets up grid with category options in six columns; also adds classes for click functionality
+            if (i < categories.length / 6) {
+                newSpan.attr('class', 'secondRow categories')
+            }
+            else if (i < categories.length / 3) {
+                newSpan.attr('class', 'thirdRow categories');
+            }
+            else if (i < categories.length / 2) {
+                newSpan.attr('class', 'fourthRow categories');
+            }
+            else if (i < categories.length * 2 / 3) {
+                newSpan.attr('class', 'fifthRow categories')
+            }
+            else if (i < categories.length * 5 / 6) {
+                newSpan.attr('class', 'sixthRow categories');
+            }
+            else {
+                newSpan.attr('class', 'seventhRow categories');
+            }
         }
-        else if (i < categories.length * 2 / 3) {
-            newSpan.attr('class', 'thirdRow categories');
-        }
-        else {
-            newSpan.attr('class', 'fourthRow categories');
+    }
+    else {
+        for (let i = 0; i < categories.length; i++) {
+            //puts categories in spans and adds a custom attribute that will be used to get the correct set of questions from the trivia api
+            let newSpan = $('<span>').html(categories[i]);
+            newSpan.attr('data-nbr', (i + 9));
+            $('main').append(newSpan);
+            //sets up grid with category options with 3 columns; also adds classes for click functionality
+            if (i < categories.length / 3) {
+                newSpan.attr('class', 'secondRow categories')
+            }
+            else if (i < categories.length * 2 / 3) {
+                newSpan.attr('class', 'thirdRow categories');
+            }
+            else {
+                newSpan.attr('class', 'fourthRow categories');
+            }
         }
     }
 }
@@ -158,6 +162,8 @@ const nextQuestion = (accuracy = -1) => {
         $('main').html($('<div>').html(`Number of questions answered correctly = ${correct}`));
         $('main').append($('<div>').html(`Number of questions answered incorrectly = ${incorrect}`));
         $('main').append($('<div>').html(`Number of questions unanswered = ${timeouts}`));
+        $('main').append($('<br>'));
+        $('main').append($('<span id="restart">').html('Play Again?'));
     }
 }
 
@@ -185,7 +191,12 @@ const timeConverter = t => {
   //adds click functionality dynamically through the use of delegation for the category options
 $(document).on('click', '.categories', function() {
     categoryNumber = $(this).attr('data-nbr');
-    queryURL = `https://opentdb.com/api.php?amount=10&category=${categoryNumber}&type=multiple`;
+    // if (sessionToken !== -1) {  //stops user from seeing the same questions
+    //     queryURL = `https://opentdb.com/api.php?amount=10&category=${categoryNumber}&type=multiple&token=${sessionToken}`;
+    // }
+    // else {
+        queryURL = `https://opentdb.com/api.php?amount=10&category=${categoryNumber}&type=multiple`;
+    //}
     $('body').prepend($('<header>'));
     //puts the questions from the selected category into arrays to be used later
     $.ajax({
@@ -219,3 +230,19 @@ $(document).on('click', '.clickable', function() {
     timeouts--; //decrease timeouts if it does not occur to balance out addition earlier
     nextQuestion(accurate);
 })
+
+$(document).on('click', '#restart', function() {
+    count = 0;
+    correct = 0;
+    incorrect = 0;
+    timeouts = 0;
+    $.ajax({
+        url: 'https://opentdb.com/api_token.php?command=request',
+        method: 'GET'
+    }).then(function(response){
+        sessionToken = response;
+    })
+    startNewGame();
+})
+
+startNewGame();
