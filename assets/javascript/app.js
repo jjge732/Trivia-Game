@@ -191,12 +191,12 @@ const timeConverter = t => {
   //adds click functionality dynamically through the use of delegation for the category options
 $(document).on('click', '.categories', function() {
     categoryNumber = $(this).attr('data-nbr');
-    // if (sessionToken !== -1) {  //stops user from seeing the same questions
-    //     queryURL = `https://opentdb.com/api.php?amount=10&category=${categoryNumber}&type=multiple&token=${sessionToken}`;
-    // }
-    // else {
+    if (sessionToken !== -1) {  //stops user from seeing the same questions
+        queryURL = `https://opentdb.com/api.php?amount=10&category=${categoryNumber}&type=multiple&token=${sessionToken}`;
+    }
+    else {
         queryURL = `https://opentdb.com/api.php?amount=10&category=${categoryNumber}&type=multiple`;
-    //}
+    }
     $('body').prepend($('<header>'));
     //puts the questions from the selected category into arrays to be used later
     $.ajax({
@@ -231,16 +231,20 @@ $(document).on('click', '.clickable', function() {
     nextQuestion(accurate);
 })
 
+//adds functionality to the 'play again' span
 $(document).on('click', '#restart', function() {
     count = 0;
     correct = 0;
     incorrect = 0;
     timeouts = 0;
+    apiQuestion = [], apiAnswerOption1 = [], apiAnswerOption2 = [], apiAnswerOption3 = [], apiAnswerOption4 = [];
+    //generates a session token to attempt to stop repeat questions
     $.ajax({
         url: 'https://opentdb.com/api_token.php?command=request',
         method: 'GET'
     }).then(function(response){
-        sessionToken = response;
+        console.log(response);
+        sessionToken = response.token;
     })
     startNewGame();
 })
