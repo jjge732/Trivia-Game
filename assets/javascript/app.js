@@ -9,20 +9,59 @@ let queryURL;
 let apiQuestion = [], apiAnswerOption1 = [], apiAnswerOption2 = [], apiAnswerOption3 = [], apiAnswerOption4 = [];
 let categories = ['General Knowledge', 'Books', 'Film', 'Music', 'Musicals','Television', 'Video Games', 'Board Games', 'Science & Nature', 'Computers', 'Math', 'Mythology', 'Sports', 'Geography', 'Politics', 'Art', 'Celebrities', 'Animals'];
 
-for (let i = 0; i < categories.length; i++) {
-    //puts categories in spans and adds a custom attribute that will be used to get the correct set of questions from the trivia api
-    let newSpan = $('<span>').html(categories[i]);
-    newSpan.attr('data-nbr', (i + 9));
-    $('main').append(newSpan);
-    //sets up grid with category options; also adds classes for click functionality
-    if (i < categories.length / 3) {
-        newSpan.attr('class', 'secondRow categories')
+if (window.matchMedia('(max-width: 490px)').matches) {
+    for (let i = 0; i < categories.length; i++) {
+        //puts categories in spans and adds a custom attribute that will be used to get the correct set of questions from the trivia api
+        let newSpan = $('<span>').html(categories[i]);
+        newSpan.attr('data-nbr', (i + 9));
+        $('main').append(newSpan);
+        $('main').append($('<br>'));
+        newSpan.attr('class', 'centerColumn categories')
     }
-    else if (i < categories.length * 2 / 3) {
-        newSpan.attr('class', 'thirdRow categories');
+}
+else if (window.matchMedia('(max-width: 985px)').matches) {
+    for (let i = 0; i < categories.length; i++) {
+        //puts categories in spans and adds a custom attribute that will be used to get the correct set of questions from the trivia api
+        let newSpan = $('<span>').html(categories[i]);
+        newSpan.attr('data-nbr', (i + 9));
+        $('main').append(newSpan);
+        //sets up grid with category options; also adds classes for click functionality
+        if (i < categories.length / 6) {
+            newSpan.attr('class', 'secondRow categories')
+        }
+        else if (i < categories.length / 3) {
+            newSpan.attr('class', 'thirdRow categories');
+        }
+        else if (i < categories.length / 2) {
+            newSpan.attr('class', 'fourthRow categories');
+        }
+        else if (i < categories.length * 2 / 3) {
+            newSpan.attr('class', 'fifthRow categories')
+        }
+        else if (i < categories.length * 5 / 6) {
+            newSpan.attr('class', 'sixthRow categories');
+        }
+        else {
+            newSpan.attr('class', 'seventhRow categories');
+        }
     }
-    else {
-        newSpan.attr('class', 'fourthRow categories');
+}
+else {
+    for (let i = 0; i < categories.length; i++) {
+        //puts categories in spans and adds a custom attribute that will be used to get the correct set of questions from the trivia api
+        let newSpan = $('<span>').html(categories[i]);
+        newSpan.attr('data-nbr', (i + 9));
+        $('main').append(newSpan);
+        //sets up grid with category options; also adds classes for click functionality
+        if (i < categories.length / 3) {
+            newSpan.attr('class', 'secondRow categories')
+        }
+        else if (i < categories.length * 2 / 3) {
+            newSpan.attr('class', 'thirdRow categories');
+        }
+        else {
+            newSpan.attr('class', 'fourthRow categories');
+        }
     }
 }
 
@@ -68,7 +107,7 @@ const createMainContent = () => {
     }
     //adds a heading to the header and starts a countdown for time left to answer the question
     $('header').prepend('<h3>');
-    timeKeeper = 1000;
+    timeKeeper = 1500;
     timeRemaining = setInterval(function() {
             timeKeeper--;
             let timeLeft = timeConverter(timeKeeper);
@@ -83,7 +122,7 @@ const nextQuestion = (accuracy = -1) => {
     if (count < apiQuestion.length) {
         timeouts++; //add timeouts every time; will subtract if an answer is selected
         if (count === 0) {  //displays the before the first question
-            $('main').html('<h2>You have 10 seconds to answer each question!</h2>');
+            $('main').html('<h2>You have 15 seconds to answer each question!</h2>');
         }
         else if (count > 0) {   //dispalys for every question except the last
             if (accuracy === -1) {
@@ -98,7 +137,7 @@ const nextQuestion = (accuracy = -1) => {
         }
         setTimeout(function() { //not included in last question in order to stop an error from occuring
             createMainContent();
-            status = setTimeout(nextQuestion, 10000);
+            status = setTimeout(nextQuestion, 15000);
             count++;
         }, 3000)
     }
