@@ -112,29 +112,26 @@ span {
     main {
         grid-template-columns: repeat(3, 1fr);
     }
+
     h1, h2 {
-        font-size: 24px;
-        grid-column: 2 / 3;
-        text-align: center;
+        grid-column: 1 / 4;
+        justify-self: center;
+        align-self: center;
     }
+
     div {
-        grid-column: 2 / 3;
-        font-size: 24px;
-        margin: 5px;
+        grid-column: 1 / 4;
     }
+
     header {
-        top: 0;
+        top: 15px;
     }
-    h3 {
-        width: 100%;
-    }
+    
     h2 {
         height: auto;
         width: 80%;
     }
-    h1 {
-        font-size: 48px;
-    }
+   
     span {
         height: 48px;
         font-size: 24px;
@@ -144,17 +141,42 @@ span {
 }
 
 @media screen and (max-width: 490px) {
+    h1, h2 {
+        font-size: 24px;
+        grid-column: 2 / 3;
+        text-align: center;
+    }
+
+    div {
+        font-size: 24px;
+        margin: 5px;
+    }
+
     main {
         grid-template-columns: 0px auto 0px;
         height: auto;
         margin-top: 100px;
     }
+
+    header {
+        top: 0;
+    }
+
     h2 {
         height: auto;
         width: 100%;
         padding: 0;
     }
+
     .clickable {
         width: 100%;
+    }
+
+    h3 {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 48px;
     }
 }
