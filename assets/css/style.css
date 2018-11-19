@@ -22,13 +22,14 @@ main {
 div {
     height: auto;
     padding: 20px 0;
-    background-color: #805C4D;
+    background-color: #E6E6E6;
     text-align: center;
-    color: #E6E6E6;
+    color: #805C4D;
     border-radius: 25px;
     align-self: center;
     grid-column: 2 / 6;
     font-size: 24px;
+    box-shadow: 1px 4px 8px;
 }
 
 h1, h2 {
@@ -103,6 +104,12 @@ span {
 
 #restart {
     grid-column: 3 / 5;
+}
+
+#restart:hover, .clickable:hover, .categories:hover {
+    cursor: pointer;
+    background-color: #805C4D;
+    color: #d8d8d8;
 }
 
 @media screen and (max-width: 1615px) {
